@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio Sutradara AI Profesional</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
+        .form-section { background-color: #1f2937; border: 1px solid #374151; border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1.5rem; transition: all 0.3s ease; }
+        .form-label { display: block; margin-bottom: 0.5rem; font-size: 0.875rem; font-weight: 600; color: #d1d5db; }
+        .form-input, .form-select, .form-textarea { width: 100%; background-color: #374151; border: 1px solid #4b5563; color: #f3f4f6; border-radius: 0.5rem; padding: 0.625rem 0.75rem; font-size: 0.875rem; transition: border-color 0.2s, box-shadow 0.2s; }
+        .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5); }
+        .btn { padding: 0.75rem 1.5rem; border-radius: 0.5rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; border: none; display: inline-flex; align-items: center; gap: 0.5rem; justify-content: center; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-primary { background-color: #3b82f6; color: white; }
+        .btn-primary:not(:disabled):hover { background-color: #2563eb; transform: translateY(-1px); }
+        .btn-secondary { background-color: #4b5563; color: #d1d5db; }
+        .btn-secondary:not(:disabled):hover { background-color: #6b7280; }
+        .btn-danger { background-color: #dc2626; color: white; }
+        .btn-danger:not(:disabled):hover { background-color: #b91c1c; }
+        .btn-ai { background: linear-gradient(to right, #10b981, #3b82f6); color: white; }
+        .btn-ai:not(:disabled):hover { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .scene-entry { transition: all 0.3s ease; }
+        .scene-content { max-height: 2500px; overflow: hidden; transition: max-height 0.7s ease-in-out, padding 0.7s ease-in-out; }
+        .scene-content.collapsed { max-height: 0; padding-top: 0; padding-bottom: 0; }
+        .tooltip { position: relative; display: inline-block; cursor: pointer; }
+        .tooltip .tooltiptext { visibility: hidden; width: 220px; background-color: #111827; color: #fff; text-align: center; border-radius: 6px; padding: 8px; position: absolute; z-index: 1; bottom: 125%; left: 50%; margin-left: -110px; opacity: 0; transition: opacity 0.3s; font-size: 0.75rem; font-weight: normal; }
+        .tooltip:hover .tooltiptext { visibility: visible; opacity: 1; }
+        .spinner { border: 2px solid #f3f3f3; border-top: 2px solid #3b82f6; border-radius: 50%; width: 16px; height: 16px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .auto-fill-loading-overlay { transition: opacity 0.3s; }
+        .scene-content.loading { pointer-events: none; opacity: 0.5; filter: blur(1px); }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200 p-4 sm:p-6 md:p-8">
+
+    <div class="max-w-6xl mx-auto">
+        <!-- Header Keren -->
+        <header class="relative text-center mb-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 overflow-hidden rounded-2xl shadow-lg" style="background: linear-gradient(90deg, #0f172a 60%, #2563eb 100%);">
+            <div class="absolute inset-0 bg-white/10 backdrop-blur-md z-0"></div>
+            <div class="relative z-10 flex items-center gap-4 p-6 sm:p-10 w-full">
+                <div class="flex-shrink-0 hidden sm:block">
+                    <div class="bg-blue-600/80 rounded-full p-3 shadow-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A2 2 0 0020 6.382V5a2 2 0 00-2-2H6a2 2 0 00-2 2v1.382a2 2 0 00.447 1.342L9 10m6 0v4m0 0l-4.553 2.276A2 2 0 014 17.618V19a2 2 0 002 2h12a2 2 0 002-2v-1.382a2 2 0 00-.447-1.342L15 14z" /></svg>
+                    </div>
+                </div>
+                <div class="flex-1 text-left">
+                    <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white drop-shadow-lg mb-2">Studio Sutradara <span class="text-blue-300">AI VEO 3</span></h1>
+                    <p class="text-lg sm:text-xl text-blue-100 font-medium drop-shadow-sm">Buat prompt video dengan <span class="font-bold text-blue-200">detail standar industri</span>.</p>
+                </div>
+            </div>
+            <button id="toggle-dark" ></button>
+        </header>
+
+        <main id="story-studio">
+            <!-- Project & Character Setup -->
+            <div class="form-section">
+                <h2 class="text-2xl font-bold text-white mb-6 border-b border-gray-700 pb-3">1. Konsep Proyek</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label for="project-title" class="form-label">Judul Film <span class="text-red-400">*</span></label>
+                        <input type="text" id="project-title" class="form-input" placeholder="Contoh: Sang Penjaga Waktu" required>
+                        <small class="text-red-400 block mt-1">Judul film wajib diisi.</small>
+                    </div>
+                    <div>
+                        <label for="project-genre" class="form-label">Genre Film</label>
+                        <select id="project-genre" class="form-select">
+                            <option value="science fiction">Fiksi Ilmiah (Sci-Fi)</option>
+                            <option value="fantasy">Fantasi</option>
+                            <option value="horror">Horor</option>
+                            <option value="drama">Drama</option>
+                            <option value="action">Aksi</option>
+                            <option value="comedy">Komedi</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center mb-4">
+                     <h3 class="text-lg font-semibold text-white">Karakter Utama</h3>
+                     <button id="add-character-btn" class="btn btn-secondary text-sm py-2 px-4">+ Tambah Karakter</button>
+                </div>
+                <div id="character-container" class="space-y-4"></div>
+            </div>
+
+            <!-- Scene Manager -->
+            <div class="form-section">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-bold text-white">2. Papan Cerita (Storyboard)</h2>
+                    <button id="add-scene-btn" class="btn btn-primary text-sm py-2 px-4">+ Tambah Adegan Baru</button>
+                </div>
+                <div id="scene-container" class="space-y-6"></div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Templates -->
+    <template id="character-template">
+        <div class="character-entry p-4 bg-gray-700/50 rounded-lg grid grid-cols-1 sm:grid-cols-3 gap-4 items-start transition-all duration-500 opacity-0 translate-y-4">
+            <input type="text" class="form-input character-name" placeholder="Nama Karakter" required>
+            <small class="text-red-400 block mt-1">Nama karakter wajib diisi.</small>
+            <textarea class="form-input sm:col-span-2 character-desc" placeholder="Deskripsi singkat (misal: detektif sinis dengan masa lalu kelam, robot ceria yang naif)" rows="2"></textarea>
+            <button class="remove-character-btn btn btn-danger btn-sm justify-center sm:col-start-3">Hapus Karakter</button>
+        </div>
+    </template>
+
+    <template id="scene-template">
+         <div class="scene-entry bg-gray-800 rounded-lg border border-gray-700 overflow-hidden transition-all duration-500 opacity-0 translate-y-4">
+            <div class="scene-header p-4 flex justify-between items-center bg-gray-700/30 cursor-pointer">
+                <h3 class="scene-title text-lg font-semibold text-white">Adegan 1</h3>
+                <div class="flex items-center gap-3">
+                    <button class="remove-scene-btn btn btn-danger btn-sm py-1 px-2">Hapus</button>
+                    <button class="toggle-scene-btn text-gray-300 hover:text-white text-2xl font-light leading-none">▼</button>
+                </div>
+            </div>
+            <div class="scene-content p-6 border-t border-gray-700 space-y-6">
+                <!-- Creative AI Helper -->
+                <div>
+                    <label class="form-label">Ringkasan Adegan (Untuk AI)</label>
+                    <textarea class="form-input scene-summary" placeholder="Contoh: Kael, sang detektif, memasuki klub malam neon untuk mencari informan." rows="2"></textarea>
+                    <div class="flex flex-col sm:flex-row gap-2 justify-center mb-4">
+                        <select class="form-select auto-fill-language max-w-xs" style="max-width:140px;">
+                            <option value="id">🇮🇩 Indonesia</option>
+                            <option value="en">🇬🇧 English</option>
+                        </select>
+                        <button class="btn btn-primary auto-fill-btn flex-1" type="button">Generate Otomatis</button>
+                    </div>
+                    <div class="mb-4">
+                        <div class="bg-blue-900/60 border border-blue-400 text-blue-200 rounded-lg px-4 py-3 text-sm flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="inline-block mr-2" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 20a8 8 0 100-16 8 8 0 000 16z"/></svg>
+                            <span><b>Petunjuk:</b> Pilih bahasa, lalu klik <b>Generate Otomatis</b> untuk mengisi seluruh form secara otomatis dengan bantuan AI. Anda tetap bisa mengedit hasilnya secara manual.</span>
+                        </div>
+                    </div>
+                    <div class="auto-fill-loading-overlay hidden absolute inset-0 flex items-center justify-center z-30 bg-gray-900/70 backdrop-blur-sm">
+                        <div class="flex flex-col items-center gap-3">
+                            <div class="animate-spin rounded-full border-4 border-blue-400 border-t-transparent h-16 w-16 mb-2"></div>
+                            <div class="text-blue-200 font-semibold text-lg">Mengisi otomatis dengan AI...</div>
+                        </div>
+                    </div>
+                    <div class="ai-suggestion-output text-sm text-gray-300 mt-3 p-4 bg-gray-700/50 rounded-md whitespace-pre-wrap" style="display:none;"></div>
+                </div>
+                
+                <!-- Detailed Prompt Section -->
+                <div class="border-t border-gray-600 pt-6">
+                    <h4 class="text-xl font-semibold text-white mb-4 text-center">Parameter Prompt Video</h4>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Left Column -->
+                        <div>
+                             <div class="p-4 border border-sky-500/30 bg-sky-900/10 rounded-lg mb-4">
+                                <h5 class="font-semibold text-sky-300 mb-3">Deskripsi Visual</h5>
+                                <div class="space-y-4">
+                                    <div><label class="form-label">Subjek & Aksi Utama</label><textarea class="form-input action" placeholder="Contoh: Detektif Kael berjalan melewati kerumunan, matanya mencari target." rows="2"></textarea></div>
+                                    <div><label class="form-label">Latar & Suasana</label><textarea class="form-input location" placeholder="Contoh: Klub malam cyberpunk yang ramai, dipenuhi cahaya neon dan hologram, suasana tegang." rows="2"></textarea></div>
+                                    <div><label class="form-label">Gaya Visual (Aesthetic)</label><select class="form-select style"><option value="cinematic">Cinematic</option><option value="photorealistic">Photorealistic</option><option value="anime style">Gaya Anime</option><option value="film noir">Film Noir</option><option value="cyberpunk">Cyberpunk</option><option value="vintage film">Vintage Film</option></select></div>
+                                    <div><label class="form-label">Dialog (jika ada)</label><textarea class="form-input dialogue" placeholder="Salin dari saran AI atau tulis sendiri" rows="2"></textarea></div>
+                                </div>
+                            </div>
+                            <div class="p-4 border border-amber-500/30 bg-amber-900/10 rounded-lg">
+                                <h5 class="font-semibold text-amber-300 mb-3">Audio & Bahasa</h5>
+                                 <div class="space-y-4">
+                                    <div><label class="form-label">Desain Suara & Musik</label><textarea class="form-input sound" placeholder="Contoh: Musik synthwave pelan, dentuman bass, gemerincing gelas, bisikan kerumunan." rows="2"></textarea></div>
+                                     <div class="grid grid-cols-2 gap-4">
+                                        <div><label class="form-label">Bahasa Prompt</label><select class="form-select prompt-language"><option value="en" selected>Inggris</option><option value="id">Indonesia</option></select></div>
+                                        <div><label class="form-label">Bahasa Dialog</label><select class="form-select dialog-language"><option value="English">Inggris</option><option value="Indonesian">Indonesia</option></select></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Right Column -->
+                        <div>
+                             <div class="p-4 border border-green-500/30 bg-green-900/10 rounded-lg mb-4">
+                                <h5 class="font-semibold text-green-300 mb-3">Sinematografi</h5>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div><label class="form-label">Bidikan</label><select class="form-select shot_type"><option value="medium shot">Medium Shot</option><option value="wide shot">Wide Shot</option><option value="close-up">Close-up</option><option value="dutch angle">Dutch Angle</option><option value="low angle shot">Low Angle</option><option value="point-of-view (POV)">Point-of-View (POV)</option></select></div>
+                                    <div><label class="form-label">Lensa</label><select class="form-select lens"><option value="50mm lens">50mm</option><option value="wide-angle lens">Wide-Angle</option><option value="telephoto lens">Telephoto</option><option value="macro lens">Macro</option></select></div>
+                                    <div><label class="form-label">Gerakan</label><select class="form-select camera_movement"><option value="static shot">Static</option><option value="tracking shot">Tracking Shot</option><option value="slow motion">Slow Motion</option><option value="handheld shot">Handheld</option><option value="dolly zoom">Dolly Zoom</option></select></div>
+                                    <div><label class="form-label">Aperture (f-stop)</label><select class="form-select aperture"><option value="f/2.8">f/2.8 (Bokeh)</option><option value="f/8">f/8 (Seimbang)</option><option value="f/16">f/16 (Fokus Dalam)</option></select></div>
+                                </div>
+                                <div class="mt-4"><label class="form-label">Pencahayaan</label><input type="text" class="form-input lighting" placeholder="Contoh: Cahaya neon biru & pink, bayangan panjang, volumetric light"></div>
+                                <div class="mt-4"><label class="form-label">Pewarnaan (Color Grade)</label><input type="text" class="form-input color_grade" placeholder="Contoh: Teal and Orange, Bleach Bypass, Vintage Kodachrome"></div>
+                            </div>
+                             <div class="p-4 border border-purple-500/30 bg-purple-900/10 rounded-lg">
+                                <h5 class="font-semibold text-purple-300 mb-3">Spesifikasi Teknis</h5>
+                                 <div class="grid grid-cols-3 gap-4">
+                                     <div><label class="form-label">Resolusi</label><select class="form-select resolution"><option value="4K">4K</option><option value="1080p">1080p</option></select></div>
+                                     <div><label class="form-label">FPS</label><select class="form-select fps"><option value="24fps">24 (Film)</option><option value="30fps">30 (Video)</option><option value="60fps">60 (Mulus)</option></select></div>
+                                     <div><label class="form-label">Durasi (s)</label><input type="number" class="form-input duration" value="10"></div>
+                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center">
+                    <button class="btn btn-primary generate-prompt-btn">Buat Prompt Profesional</button>
+                    <div class="relative mt-3">
+                        <textarea class="form-textarea h-72 output-prompt" readonly placeholder="Hasil prompt lengkap dan terstruktur akan muncul di sini..."></textarea>
+                        <button class="copy-prompt-btn absolute top-3 right-3 btn btn-secondary text-xs py-1 px-3">Salin</button>
+                    </div>
+                    <p class="copy-notification text-sm text-green-400 mt-2 opacity-0">Prompt berhasil disalin!</p>
+                </div>
+            </div>
+        </div>
+    </template>
+    
+    <!-- Progress bar di atas form -->
+    <div id="ai-progress-bar" class="fixed top-0 left-0 w-0 h-1 bg-blue-500 z-50 transition-all duration-500"></div>
+    
+    <!-- Tombol Scroll to Top & Bottom -->
+    <button id="scroll-top-btn" class="fixed bottom-20 right-6 z-50 bg-blue-600 text-white rounded-full shadow-lg p-3 opacity-0 pointer-events-none transition-all duration-300 hover:bg-blue-800 hover:scale-110" title="Scroll ke atas">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" /></svg>
+    </button>
+    <button id="scroll-bottom-btn" class="fixed bottom-6 right-6 z-50 bg-blue-600 text-white rounded-full shadow-lg p-3 opacity-0 pointer-events-none transition-all duration-300 hover:bg-blue-800 hover:scale-110" title="Scroll ke bawah">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+    </button>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // ... (kode JS dari versi sebelumnya untuk event listener dasar seperti add/remove scene/character) ...
+        const getEl = (id) => document.getElementById(id);
+        const characterContainer = getEl('character-container');
+        const sceneContainer = getEl('scene-container');
+
+        const addCharacter = () => {
+            const el = document.getElementById('character-template').content.cloneNode(true).children[0];
+            characterContainer.appendChild(el);
+            setTimeout(() => { el.classList.remove('opacity-0','translate-y-4'); }, 10);
+        };
+        getEl('add-character-btn').addEventListener('click', addCharacter);
+        characterContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('remove-character-btn')) {
+                const entry = e.target.closest('.character-entry');
+                entry.classList.add('opacity-0','-translate-x-8');
+                setTimeout(() => entry.remove(), 400);
+            }
+        });
+
+        const addScene = () => {
+            const el = document.getElementById('scene-template').content.cloneNode(true).children[0];
+            sceneContainer.appendChild(el);
+            setTimeout(() => { el.classList.remove('opacity-0','translate-y-4'); }, 10);
+        };
+        getEl('add-scene-btn').addEventListener('click', addScene);
+        
+        addCharacter();
+        addScene();
+
+        sceneContainer.addEventListener('click', async (e) => {
+            const sceneEntry = e.target.closest('.scene-entry');
+            if (!sceneEntry) return;
+
+            const targetClassList = e.target.classList;
+
+            if (targetClassList.contains('remove-scene-btn')) {
+                sceneEntry.classList.add('opacity-0','-translate-x-8');
+                setTimeout(() => {
+                    sceneEntry.remove();
+                    document.querySelectorAll('.scene-entry').forEach((scene, index) => {
+                        scene.querySelector('.scene-title').textContent = `Adegan ${index + 1}`;
+                    });
+                }, 400);
+            }
+            
+            if (e.target.closest('.scene-header')) {
+                const content = sceneEntry.querySelector('.scene-content');
+                const btn = sceneEntry.querySelector('.toggle-scene-btn');
+                content.classList.toggle('collapsed');
+                btn.style.transform = content.classList.contains('collapsed') ? 'rotate(0deg)' : 'rotate(180deg)';
+            }
+
+            if (targetClassList.contains('ai-assist-btn') || e.target.parentElement.classList.contains('ai-assist-btn')) {
+                const btn = e.target.closest('.ai-assist-btn');
+                const btnText = btn.querySelector('.btn-text');
+                const spinner = btn.querySelector('.spinner');
+                const summaryInput = sceneEntry.querySelector('.scene-summary');
+                const outputP = sceneEntry.querySelector('.ai-suggestion-output');
+                
+                if (!summaryInput.value) {
+                    outputP.textContent = "Mohon isi Ringkasan Adegan terlebih dahulu untuk memberikan konteks pada AI.";
+                    outputP.style.display = 'block'; return;
+                }
+                
+                btnText.style.display = 'none'; spinner.style.display = 'block'; btn.disabled = true;
+
+                try {
+                    const characters = Array.from(document.querySelectorAll('.character-entry')).map(c => `${c.querySelector('.character-name').value || 'Tanpa Nama'} (${c.querySelector('.character-desc').value || 'Tanpa deskripsi'})`).join('; ');
+                    const prevScene = sceneEntry.previousElementSibling;
+                    const previous_scene_context = prevScene ? prevScene.querySelector('.scene-summary').value : '';
+                    
+                    const payload = {
+                        project_title: getEl('project-title').value || 'Tanpa Judul', genre: getEl('project-genre').value, characters,
+                        scene_summary: summaryInput.value, previous_scene_context
+                    };
+
+                    const response = await fetch('http://127.0.0.1:5000/api/generate', {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+                    });
+                    
+                    if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+                    const data = await response.json();
+                    outputP.innerHTML = data.text.replace(/### (.*?)\n/g, '<h6 class="font-bold text-teal-300 mt-3 mb-1">$1</h6>').replace(/\*\* (.*?):/g,'<strong class="text-gray-300">$1:</strong>');
+                } catch (error) {
+                    console.error("AI Assist Error:", error);
+                    outputP.textContent = "Gagal terhubung ke server Python. Pastikan server berjalan di http://127.0.0.1:5000.";
+                } finally {
+                    outputP.style.display = 'block'; btnText.style.display = 'inline'; spinner.style.display = 'none'; btn.disabled = false;
+                }
+            }
+
+            if (targetClassList.contains('generate-prompt-btn')) {
+                 const getVal = (selector) => {
+                     const element = sceneEntry.querySelector(selector);
+                     return element ? element.value.trim() : '';
+                 };
+                 const promptLang = getVal('.prompt-language');
+                 const dialogLang = getVal('.dialog-language');
+                 const dialogue = getVal('.dialogue');
+
+                 const buildSection = (title, content) => content ? `${title}\n${content}\n\n` : '';
+                 
+                 let prompt;
+                 if (promptLang === 'en') {
+                    prompt = buildSection("## Core Concept", `Style: ${getVal('.style')}\nScene: ${getVal('.action')}`)
+                           + buildSection("## Visual Description", `Subject: ${getVal('.subject')}\nSetting: ${getVal('.location')}`)
+                           + buildSection("## Cinematography", `Shot: ${getVal('.shot_type')}\nLens: ${getVal('.lens')}\nMovement: ${getVal('.camera_movement')}\nAperture: ${getVal('.aperture')}\nLighting: ${getVal('.lighting')}\nColor Grade: ${getVal('.color_grade')}`)
+                           + buildSection("## Audio", `Sound Design: ${getVal('.sound')}`)
+                           + (dialogue ? buildSection(`## Dialogue (Spoken in ${dialogLang})`, dialogue) : '')
+                           + buildSection("## Technical Specs", `Resolution: ${getVal('.resolution')}\nFrame Rate: ${getVal('.fps')}\nDuration: ${getVal('.duration')} seconds`);
+                 } else { // id
+                    prompt = buildSection("## Konsep Inti", `Gaya: ${getVal('.style')}\nAdegan: ${getVal('.action')}`)
+                           + buildSection("## Deskripsi Visual", `Subjek: ${getVal('.subject')}\nLatar: ${getVal('.location')}`)
+                           + buildSection("## Sinematografi", `Bidikan: ${getVal('.shot_type')}\nLensa: ${getVal('.lens')}\nGerakan: ${getVal('.camera_movement')}\nAperture: ${getVal('.aperture')}\nPencahayaan: ${getVal('.lighting')}\nPewarnaan: ${getVal('.color_grade')}`)
+                           + buildSection("## Audio", `Desain Suara: ${getVal('.sound')}`)
+                           + (dialogue ? buildSection(`## Dialog (Diucapkan dalam Bahasa ${dialogLang})`, dialogue) : '')
+                           + buildSection("## Spesifikasi Teknis", `Resolusi: ${getVal('.resolution')}\nFrame Rate: ${getVal('.fps')}\nDurasi: ${getVal('.duration')} detik`);
+                 }
+                 
+                 const outputPrompt = sceneEntry.querySelector('.output-prompt');
+                 if (outputPrompt) {
+                     outputPrompt.value = prompt.trim();
+                 }
+            }
+
+            if (targetClassList.contains('copy-prompt-btn')) {
+                const output = sceneEntry.querySelector('.output-prompt');
+                const notification = sceneEntry.querySelector('.copy-notification');
+                if (!output.value) return;
+                const textArea = document.createElement("textarea");
+                textArea.value = output.value;
+                textArea.style.position = "fixed"; textArea.style.top = "-9999px";
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    notification.classList.remove('opacity-0');
+                    setTimeout(() => notification.classList.add('opacity-0'), 2000);
+                } catch (err) { console.error('Gagal menyalin', err); }
+                document.body.removeChild(textArea);
+            }
+
+            if (e.target.classList.contains('auto-fill-btn')) {
+                showProgressBar();
+                try {
+                    // Validasi wajib isi Judul Film dan Nama Karakter
+                    const projectTitle = document.getElementById('project-title').value.trim();
+                    const characterNames = Array.from(document.querySelectorAll('.character-name')).map(c => c.value.trim()).filter(Boolean);
+                    if (!projectTitle) {
+                        showToast('Judul film wajib diisi!','error');
+                        e.preventDefault();
+                        return false;
+                    }
+                    if (characterNames.length === 0) {
+                        showToast('Minimal satu nama karakter wajib diisi!','error');
+                        e.preventDefault();
+                        return false;
+                    }
+                    const sceneContent = sceneEntry.querySelector('.scene-content');
+                    const loadingOverlay = sceneEntry.querySelector('.auto-fill-loading-overlay');
+                    sceneContent.classList.add('loading');
+                    if (loadingOverlay) loadingOverlay.classList.remove('hidden');
+                    e.target.textContent = 'Mengisi...';
+                    e.target.disabled = true;
+                    try {
+                        const getVal = (selector) => {
+                            const el = sceneEntry.querySelector(selector);
+                            return el ? el.value.trim() : '';
+                        };
+                        const genre = document.getElementById('project-genre').value;
+                        const characters = Array.from(document.querySelectorAll('.character-entry')).map(c => `${c.querySelector('.character-name').value || 'Tanpa Nama'} (${c.querySelector('.character-desc').value || 'Tanpa deskripsi'})`).join('; ');
+                        const sceneSummary = getVal('.scene-summary');
+                        const prevScene = sceneEntry.previousElementSibling;
+                        const previous_scene_context = prevScene ? prevScene.querySelector('.scene-summary').value : '';
+                        const response = await fetch('http://127.0.0.1:5000/api/auto-fill-form', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                project_title: projectTitle,
+                                genre: genre,
+                                characters: characters,
+                                scene_summary: sceneSummary,
+                                previous_scene_context: previous_scene_context,
+                                output_language: getVal('.auto-fill-language')
+                            })
+                        });
+                        if (!response.ok) throw new Error('Gagal mendapatkan data dari AI');
+                        const data = await response.json();
+                        const mapping = {
+                            action: '.action',
+                            location: '.location',
+                            style: '.style',
+                            dialogue: '.dialogue',
+                            sound: '.sound',
+                            prompt_language: '.prompt-language',
+                            dialog_language: '.dialog-language',
+                            shot_type: '.shot_type',
+                            lens: '.lens',
+                            camera_movement: '.camera_movement',
+                            aperture: '.aperture',
+                            lighting: '.lighting',
+                            color_grade: '.color_grade',
+                            resolution: '.resolution',
+                            fps: '.fps',
+                            duration: '.duration'
+                        };
+                        for (const key in mapping) {
+                            const selector = mapping[key];
+                            const el = sceneEntry.querySelector(selector);
+                            if (el && data[key] !== undefined) {
+                                if (el.tagName === 'SELECT' || el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                                    el.value = data[key];
+                                    if (!el.classList.contains('output-prompt')) {
+                                        el.removeAttribute('readonly');
+                                        el.removeAttribute('disabled');
+                                    }
+                                }
+                            }
+                        }
+                    } catch (err) {
+                        alert('Gagal mengisi otomatis: ' + err.message);
+                    } finally {
+                        e.target.textContent = 'Generate Otomatis';
+                        e.target.disabled = false;
+                        sceneContent.classList.remove('loading');
+                        if (loadingOverlay) loadingOverlay.classList.add('hidden');
+                    }
+                } catch (err) {
+                    alert('Gagal mengisi otomatis: ' + err.message);
+                } finally {
+                    hideProgressBar();
+                }
+            }
+        });
+
+        sceneContainer.addEventListener('change', (e) => {
+            if (e.target.classList.contains('auto-fill-language')) {
+                const sceneEntry = e.target.closest('.scene-entry');
+                if (!sceneEntry) return;
+                const lang = e.target.value;
+                const labels = {
+                    id: {
+                        'Subjek & Aksi Utama': 'Subjek & Aksi Utama',
+                        'Latar & Suasana': 'Latar & Suasana',
+                        'Gaya Visual (Aesthetic)': 'Gaya Visual (Aesthetic)',
+                        'Dialog (jika ada)': 'Dialog (jika ada)',
+                        'Desain Suara & Musik': 'Desain Suara & Musik',
+                        'Bahasa Prompt': 'Bahasa Prompt',
+                        'Bahasa Dialog': 'Bahasa Dialog',
+                        'Bidikan': 'Bidikan',
+                        'Lensa': 'Lensa',
+                        'Gerakan': 'Gerakan',
+                        'Aperture (f-stop)': 'Aperture (f-stop)',
+                        'Pencahayaan': 'Pencahayaan',
+                        'Pewarnaan (Color Grade)': 'Pewarnaan (Color Grade)',
+                        'Resolusi': 'Resolusi',
+                        'FPS': 'FPS',
+                        'Durasi (s)': 'Durasi (s)',
+                        'Hasil prompt lengkap dan terstruktur akan muncul di sini...': 'Hasil prompt lengkap dan terstruktur akan muncul di sini...'
+                    },
+                    en: {
+                        'Subjek & Aksi Utama': 'Subject & Main Action',
+                        'Latar & Suasana': 'Setting & Atmosphere',
+                        'Gaya Visual (Aesthetic)': 'Visual Style (Aesthetic)',
+                        'Dialog (jika ada)': 'Dialogue (if any)',
+                        'Desain Suara & Musik': 'Sound Design & Music',
+                        'Bahasa Prompt': 'Prompt Language',
+                        'Bahasa Dialog': 'Dialogue Language',
+                        'Bidikan': 'Shot Type',
+                        'Lensa': 'Lens',
+                        'Gerakan': 'Camera Movement',
+                        'Aperture (f-stop)': 'Aperture (f-stop)',
+                        'Pencahayaan': 'Lighting',
+                        'Pewarnaan (Color Grade)': 'Color Grade',
+                        'Resolusi': 'Resolution',
+                        'FPS': 'FPS',
+                        'Durasi (s)': 'Duration (s)',
+                        'Hasil prompt lengkap dan terstruktur akan muncul di sini...': 'The complete and structured prompt will appear here...'
+                    }
+                };
+                sceneEntry.querySelectorAll('.form-label').forEach(label => {
+                    const text = label.textContent.trim();
+                    if (labels[lang][text]) label.textContent = labels[lang][text];
+                });
+                const placeholders = {
+                    id: {
+                        'Contoh: Detektif Kael berjalan melewati kerumunan, matanya mencari target.': 'Contoh: Detektif Kael berjalan melewati kerumunan, matanya mencari target.',
+                        'Contoh: Klub malam cyberpunk yang ramai, dipenuhi cahaya neon dan hologram, suasana tegang.': 'Contoh: Klub malam cyberpunk yang ramai, dipenuhi cahaya neon dan hologram, suasana tegang.',
+                        'Salin dari saran AI atau tulis sendiri': 'Salin dari saran AI atau tulis sendiri',
+                        'Contoh: Musik synthwave pelan, dentuman bass, gemerincing gelas, bisikan kerumunan.': 'Contoh: Musik synthwave pelan, dentuman bass, gemerincing gelas, bisikan kerumunan.',
+                        'Contoh: Cahaya neon biru & pink, bayangan panjang, volumetric light': 'Contoh: Cahaya neon biru & pink, bayangan panjang, volumetric light',
+                        'Contoh: Teal and Orange, Bleach Bypass, Vintage Kodachrome': 'Contoh: Teal and Orange, Bleach Bypass, Vintage Kodachrome',
+                        'Hasil prompt lengkap dan terstruktur akan muncul di sini...': 'Hasil prompt lengkap dan terstruktur akan muncul di sini...'
+                    },
+                    en: {
+                        'Contoh: Detektif Kael berjalan melewati kerumunan, matanya mencari target.': 'e.g.: Detective Kael walks through the crowd, eyes searching for the target.',
+                        'Contoh: Klub malam cyberpunk yang ramai, dipenuhi cahaya neon dan hologram, suasana tegang.': 'e.g.: A crowded cyberpunk nightclub, filled with neon lights and holograms, tense atmosphere.',
+                        'Salin dari saran AI atau tulis sendiri': 'Copy from AI suggestion or write your own',
+                        'Contoh: Musik synthwave pelan, dentuman bass, gemerincing gelas, bisikan kerumunan.': 'e.g.: Soft synthwave music, bass thump, clinking glasses, crowd whispers.',
+                        'Contoh: Cahaya neon biru & pink, bayangan panjang, volumetric light': 'e.g.: Blue & pink neon lights, long shadows, volumetric light',
+                        'Contoh: Teal and Orange, Bleach Bypass, Vintage Kodachrome': 'e.g.: Teal and Orange, Bleach Bypass, Vintage Kodachrome',
+                        'Hasil prompt lengkap dan terstruktur akan muncul di sini...': 'The complete and structured prompt will appear here...'
+                    }
+                };
+                sceneEntry.querySelectorAll('input, textarea, select').forEach(el => {
+                    if (el.placeholder && placeholders[lang][el.placeholder]) {
+                        el.placeholder = placeholders[lang][el.placeholder];
+                    }
+                });
+                const outputPrompt = sceneEntry.querySelector('.output-prompt');
+                if (outputPrompt && placeholders[lang][outputPrompt.placeholder]) {
+                    outputPrompt.placeholder = placeholders[lang][outputPrompt.placeholder];
+                }
+            }
+        });
+
+        // DARK/LIGHT MODE
+        const html = document.documentElement;
+        const toggleDark = document.getElementById('toggle-dark');
+        toggleDark.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+        });
+        if (localStorage.getItem('theme') === 'dark') html.classList.add('dark');
+
+        // PROGRESS BAR LOGIC
+        function showProgressBar() {
+            const bar = document.getElementById('ai-progress-bar');
+            bar.style.width = '0%';
+            bar.classList.remove('hidden');
+            setTimeout(() => { bar.style.width = '100%'; }, 50);
+        }
+        function hideProgressBar() {
+            const bar = document.getElementById('ai-progress-bar');
+            bar.style.width = '0%';
+            setTimeout(() => { bar.classList.add('hidden'); }, 600);
+        }
+
+        // TOAST NOTIFIKASI
+        window.showToast = function(msg, type='success') {
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: type,
+                title: msg,
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true
+            });
+        };
+
+        // Tombol Scroll to Top & Bottom
+        const scrollTopBtn = document.getElementById('scroll-top-btn');
+        const scrollBottomBtn = document.getElementById('scroll-bottom-btn');
+        function updateScrollBtns() {
+            const scrollY = window.scrollY;
+            const winH = window.innerHeight;
+            const docH = document.body.scrollHeight;
+            // Tampilkan scroll to top jika scrollY > 200
+            if (scrollY > 200) {
+                scrollTopBtn.classList.remove('opacity-0','pointer-events-none');
+            } else {
+                scrollTopBtn.classList.add('opacity-0','pointer-events-none');
+            }
+            // Tampilkan scroll to bottom jika belum di paling bawah
+            if (scrollY + winH < docH - 100) {
+                scrollBottomBtn.classList.remove('opacity-0','pointer-events-none');
+            } else {
+                scrollBottomBtn.classList.add('opacity-0','pointer-events-none');
+            }
+        }
+        window.addEventListener('scroll', updateScrollBtns);
+        window.addEventListener('resize', updateScrollBtns);
+        scrollTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+        scrollBottomBtn.addEventListener('click', () => {
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        });
+        updateScrollBtns();
+    });
+    </script>
+</body>
+</html>
