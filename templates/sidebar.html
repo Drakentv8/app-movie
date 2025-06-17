@@ -1,0 +1,275 @@
+<!-- Navbar Topbar Responsive Only -->
+<nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(90deg, #0f172a 0%, #2563eb 60%, #7c3aed 100%) !important; z-index:9999;">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">
+            <i class="fas fa-magic"></i> AI Creative Tools
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNavbar">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="/"><i class="fas fa-home"></i> Beranda</a></li>
+                <li class="nav-item"><a class="nav-link" href="/generate-movie"><i class="fas fa-film"></i> Generator Film</a></li>
+                <li class="nav-item"><a class="nav-link" href="/generate-iklan"><i class="fas fa-ad"></i> Generator Iklan</a></li>
+
+        </div>
+    </div>
+</nav>
+<!-- End Navbar Topbar Only -->
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+    --sidebar-width: 220px;
+}
+body, .sidebar-menu, .navbar {
+    font-family: 'Poppins', 'Inter', 'Segoe UI', sans-serif !important;
+}
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(15,23,42,0.45);
+    z-index: 1040;
+    transition: opacity 0.3s;
+}
+.sidebar-overlay.active {
+    display: block;
+    opacity: 1;
+}
+.sidebar-menu {
+    position: fixed;
+    top: 18px;
+    left: -100vw;
+    width: var(--sidebar-width);
+    height: calc(100vh - 36px);
+    background: linear-gradient(135deg, #101828 0%, #2563eb 60%, #7c3aed 100%);
+    box-shadow: 0 8px 32px 0 #2563eb33, 0 0 16px 1px #7c3aed33;
+    z-index: 1050;
+    transition: left 0.35s cubic-bezier(.77,0,.18,1);
+    border-top-right-radius: 28px;
+    border-bottom-right-radius: 28px;
+    overflow-y: auto;
+    padding-top: 0 !important;
+    padding-left: 0 !important;
+    margin: 0 !important;
+    border-right: 2px solid #fff2;
+    border-left: 1px solid #fff1;
+    backdrop-filter: blur(10px) saturate(140%);
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+.sidebar-menu.active {
+    left: 0;
+}
+.sidebar-header {
+    border-bottom: 1px solid rgba(255,255,255,0.10);
+    margin-bottom: 1rem;
+    padding-top: 1.1rem;
+    padding-bottom: 0.7rem;
+    padding-left: 1.1rem;
+}
+.sidebar-menu .navbar-brand {
+    font-weight: 700;
+    font-size: 1.25rem;
+    background: linear-gradient(90deg, #fff 10%, #60a5fa 60%, #a78bfa 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 1.2px;
+    text-shadow: 0 2px 8px #7c3aed33, 0 1px 2px #2563eb22;
+    filter: drop-shadow(0 2px 6px #2563eb22);
+}
+.btn-close-sidebar {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1.4rem;
+    transition: color 0.2s;
+}
+.btn-close-sidebar:hover {
+    color: #a78bfa;
+}
+.sidebar-menu .nav {
+    margin-top: 0.7rem;
+}
+.sidebar-menu .nav-link {
+    color: #f3f4f6;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 0.85rem 1.3rem;
+    border-radius: 22px;
+    margin: 0.5rem 0;
+    transition: background 0.18s, color 0.18s, box-shadow 0.18s, border 0.18s, transform 0.18s, letter-spacing 0.18s;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    position: relative;
+    z-index: 1;
+    border: 2px solid transparent;
+    box-shadow: 0 2px 10px 0 rgba(59,130,246,0.10);
+    background: rgba(30,41,59,0.75);
+    backdrop-filter: blur(6px) saturate(110%);
+    letter-spacing: 0.2px;
+}
+.sidebar-menu .nav-link i {
+    font-size: 1.25em;
+    color: #60a5fa;
+    background: linear-gradient(135deg, #2563eb 0%, #a78bfa 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    border-radius: 50%;
+    padding: 0.4rem;
+    margin-right: 0.1rem;
+    box-shadow: 0 2px 6px #2563eb11;
+    transition: color 0.18s, background 0.18s;
+}
+.sidebar-menu .nav-link:hover, .sidebar-menu .nav-link.active {
+    background: linear-gradient(90deg, #2563eb 60%, #7c3aed 100%);
+    color: #fff;
+    border: 2px solid #a78bfa;
+    box-shadow: 0 8px 24px 0 #2563eb33, 0 0 12px 1px #7c3aed33;
+    outline: 2px solid #fff2;
+    transform: translateY(-1px) scale(1.03);
+    letter-spacing: 0.6px;
+    text-shadow: 0 2px 8px #7c3aed33, 0 1px 2px #2563eb22;
+}
+.sidebar-menu .nav-link:hover i, .sidebar-menu .nav-link.active i {
+    color: #fff;
+    background: linear-gradient(135deg, #a78bfa 0%, #2563eb 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.sidebar-menu .nav-link.active {
+    outline: 2.5px solid #fff;
+    background: linear-gradient(90deg, #2563eb 80%, #7c3aed 100%);
+    color: #fff;
+}
+@media (max-width: 991px) {
+    .sidebar-menu {
+        top: 0;
+        height: 100vh;
+        border-top-right-radius: 20px;
+        border-bottom-right-radius: 20px;
+    }
+    .sidebar-header {
+        padding-top: 0.7rem;
+        padding-bottom: 0.5rem;
+        padding-left: 0.8rem;
+    }
+}
+
+@media (min-width: 992px) {
+    .sidebar-menu {
+        display: flex !important;
+    }
+    .sidebar-overlay, .navbar.d-lg-none {
+        display: none !important;
+    }
+    .navbar.d-lg-flex {
+        display: flex !important;
+    }
+}
+@media (max-width: 991.98px) {
+    .navbar.d-lg-flex {
+        display: none !important;
+    }
+    .navbar.d-lg-none {
+        display: flex !important;
+    }
+}
+
+.navbar.d-lg-flex {
+    background: linear-gradient(90deg, #0f172a 0%, #2563eb 60%, #7c3aed 100%) !important;
+    box-shadow: 0 4px 30px rgba(59,130,246,0.13), 0 8px 32px 0 rgba(31, 38, 135, 0.18) !important;
+    border-bottom: 2.5px solid #a78bfa !important;
+    font-family: 'Poppins', 'Inter', 'Segoe UI', sans-serif !important;
+    font-size: 1.13rem;
+    font-weight: 600;
+    letter-spacing: 0.7px;
+}
+.navbar .navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 800;
+    background: linear-gradient(90deg, #fff 10%, #60a5fa 60%, #a78bfa 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 2px;
+    text-shadow: 0 2px 16px #7c3aed55, 0 1px 2px #2563eb33;
+    filter: drop-shadow(0 2px 8px #2563eb33);
+}
+.navbar .nav-link {
+    color: #f3f4f6 !important;
+    font-weight: 700;
+    margin: 0 0.7rem;
+    font-size: 1.13rem;
+    border-radius: 18px;
+    padding: 0.7rem 1.3rem;
+    transition: background 0.22s, color 0.22s, box-shadow 0.22s, border 0.22s, letter-spacing 0.22s;
+    background: none;
+    letter-spacing: 0.5px;
+}
+.navbar .nav-link i {
+    font-size: 1.2em;
+    margin-right: 0.4rem;
+    background: linear-gradient(135deg, #2563eb 0%, #a78bfa 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.navbar .nav-link:hover, .navbar .nav-link.active {
+    background: linear-gradient(90deg, #2563eb 60%, #7c3aed 100%);
+    color: #fff !important;
+    box-shadow: 0 6px 24px 0 #2563eb55, 0 0 16px 2px #7c3aed55;
+    letter-spacing: 1.1px;
+    text-shadow: 0 2px 16px #7c3aed55, 0 1px 2px #2563eb33;
+}
+.navbar .nav-link.active {
+    background: linear-gradient(90deg, #2563eb 80%, #7c3aed 100%);
+    color: #fff !important;
+    box-shadow: 0 12px 36px 0 #2563eb77, 0 0 24px 2px #7c3aed77;
+}
+</style>
+
+<script>
+if (!window.sidebarToggleInitialized) {
+    window.sidebarToggleInitialized = true;
+    var sidebarToggle = document.getElementById('sidebarToggle');
+    var sidebarMenu = document.getElementById('sidebarMenu');
+    var sidebarOverlay = document.getElementById('sidebarOverlay');
+    var sidebarClose = document.getElementById('sidebarClose');
+    function openSidebar() {
+        sidebarMenu.classList.add('active');
+        sidebarOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeSidebar() {
+        sidebarMenu.classList.remove('active');
+        sidebarOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    if (sidebarToggle) sidebarToggle.onclick = openSidebar;
+    if (sidebarClose) sidebarClose.onclick = closeSidebar;
+    if (sidebarOverlay) sidebarOverlay.onclick = closeSidebar;
+    window.addEventListener('resize', function() {
+        if (window.innerWidth >= 992) closeSidebar();
+    });
+}
+
+// Close sidebar mobile otomatis saat klik menu
+window.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.sidebar-menu .nav-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+      if(window.innerWidth < 992) {
+        document.getElementById('sidebarMenu').classList.remove('active');
+        document.getElementById('sidebarOverlay').classList.remove('active');
+      }
+    });
+  });
+});
+</script> 

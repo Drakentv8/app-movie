@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Creative Tools</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #0f172a;
+            --secondary-color: #3b82f6;
+            --accent-color: #10b981;
+            --text-color: #e2e8f0;
+            --light-bg: #1e293b;
+            --gradient-1: linear-gradient(135deg, #0f172a 0%, #1e40af 100%);
+            --gradient-2: linear-gradient(135deg, #3b82f6 0%, #10b981 100%);
+            --gradient-3: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            color: var(--text-color);
+            background-color: var(--primary-color);
+            overflow-x: hidden;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            background: var(--gradient-1);
+            padding-top: 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .hero-content {
+            padding: 4rem 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: #94a3b8;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        /* Tools Section */
+        .tools-section {
+            padding: 6rem 0;
+            background-color: var(--light-bg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tools-section::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%233b82f6' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .tool-card {
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 1rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-3);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 0;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .tool-card:hover::before {
+            opacity: 0.1;
+        }
+
+        .tool-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tool-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-color);
+            position: relative;
+            z-index: 1;
+        }
+
+        .tool-description {
+            color: #94a3b8;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Features Section */
+        .features-section {
+            padding: 6rem 0;
+            background: var(--gradient-1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-item {
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 6rem 0;
+            background: var(--gradient-3);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .cta-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            padding: 4rem 0 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 1px;
+            top: 0;
+            left: 0;
+            background: var(--gradient-2);
+        }
+
+        .footer-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+
+        .footer-link {
+            color: #94a3b8;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--text-color);
+            text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+        }
+
+        .social-links a {
+            color: var(--text-color);
+            font-size: 1.5rem;
+            margin-right: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: #3b82f6;
+            transform: translateY(-3px);
+            text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+        }
+
+        /* Buttons */
+        .btn-custom {
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .btn-custom::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-2);
+            z-index: -1;
+            transition: opacity 0.3s ease;
+        }
+
+        .btn-custom:hover::before {
+            opacity: 0.9;
+        }
+
+        .btn-primary-custom {
+            background: var(--gradient-2);
+            border: none;
+            color: white;
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
+            color: white;
+        }
+
+        /* Animations */
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+
+            .tool-card {
+                margin: 1rem 0;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--primary-color);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--gradient-2);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gradient-3);
+        }
+    </style>
+</head>
+<body>
+    {% include 'sidebar.html' %}
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="row align-items-center hero-content">
+                <div class="col-lg-6" data-aos="fade-right">
+                    <h1 class="hero-title">Tingkatkan Kreativitas Anda dengan AI</h1>
+                    <p class="hero-subtitle">Temukan kekuatan AI dalam menciptakan konten film dan iklan yang menakjubkan. Platform kami menyediakan alat canggih untuk membantu Anda menghasilkan ide-ide kreatif yang luar biasa.</p>
+                    <a href="#tools" class="btn btn-custom btn-primary-custom">
+                        <i class="fas fa-rocket"></i> Mulai Sekarang
+                    </a>
+                </div>
+                <div class="col-lg-6" data-aos="fade-left">
+                    <div class="position-relative">
+                        <img src="https://source.unsplash.com/random/800x600/?technology,creative" alt="AI Creative Tools" class="img-fluid rounded-3 floating">
+                        <div class="position-absolute top-0 start-0 w-100 h-100 bg-gradient-2 opacity-20 rounded-3"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tools Section -->
+    <section id="tools" class="tools-section">
+        <div class="container">
+            <h2 class="text-center mb-5" data-aos="fade-up">Alat Kreatif Kami</h2>
+            <div class="row">
+                <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
+                    <div class="tool-card">
+                        <i class="fas fa-film tool-icon"></i>
+                        <h3 class="tool-title">Generator Film</h3>
+                        <p class="tool-description">Buat ide film yang menakjubkan dengan bantuan AI. Dapatkan saran untuk plot, karakter, dan elemen sinematik yang unik.</p>
+                        <a href="/generate-movie" class="btn btn-custom btn-primary-custom">Coba Sekarang</a>
+                    </div>
+                </div>
+                <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
+                    <div class="tool-card">
+                        <i class="fas fa-ad tool-icon"></i>
+                        <h3 class="tool-title">Generator Iklan</h3>
+                        <p class="tool-description">Buat iklan yang menarik dan efektif dengan bantuan AI. Dapatkan ide kreatif untuk copywriting dan konsep iklan.</p>
+                        <a href="/generate-iklan" class="btn btn-custom btn-primary-custom">Coba Sekarang</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="container">
+            <h2 class="text-center mb-5" data-aos="fade-up">Fitur Unggulan</h2>
+            <div class="row">
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="feature-item">
+                        <i class="fas fa-brain feature-icon"></i>
+                        <h4>AI Canggih</h4>
+                        <p>Ditenagai oleh teknologi AI terbaru untuk hasil yang optimal</p>
+                    </div>
+                </div>
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="feature-item">
+                        <i class="fas fa-bolt feature-icon"></i>
+                        <h4>Hasil Cepat</h4>
+                        <p>Dapatkan ide kreatif dalam hitungan detik</p>
+                    </div>
+                </div>
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="feature-item">
+                        <i class="fas fa-paint-brush feature-icon"></i>
+                        <h4>Kreatif & Unik</h4>
+                        <p>Hasilkan ide-ide yang segar dan orisinal</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container text-center">
+            <h2 class="cta-title" data-aos="fade-up">Siap Untuk Memulai?</h2>
+            <p class="mb-4" data-aos="fade-up" data-aos-delay="100">Jelajahi kekuatan AI dalam menciptakan konten kreatif yang menakjubkan</p>
+            <a href="#tools" class="btn btn-custom btn-light" data-aos="fade-up" data-aos-delay="200">
+                <i class="fas fa-rocket"></i> Mulai Sekarang
+            </a>
+    </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <h3 class="footer-title">AI Creative Tools</h3>
+                    <p>Platform kreatif yang didukung AI untuk membantu Anda menghasilkan ide-ide luar biasa.</p>
+                    <div class="social-links mt-3">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-4 mb-4">
+                    <h3 class="footer-title">Tautan Cepat</h3>
+                    <ul class="list-unstyled">
+                        <li><a href="/" class="footer-link">Beranda</a></li>
+                        <li><a href="/generate-movie" class="footer-link">Generator Film</a></li>
+                        <li><a href="/generate-iklan" class="footer-link">Generator Iklan</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4 mb-4">
+                    <h3 class="footer-title">Kontak</h3>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-envelope me-2"></i> info@aicreativetools.com</li>
+                        <li><i class="fas fa-phone me-2"></i> +62 123 4567 890</li>
+                        <li><i class="fas fa-map-marker-alt me-2"></i> Jakarta, Indonesia</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="mt-4 mb-4" style="border-color: rgba(255,255,255,0.1);">
+            <div class="text-center">
+                <p class="mb-0">&copy; 2024 AI Creative Tools. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 1000,
+            once: true
+        });
+
+        // Add particle effect to hero section
+        const hero = document.querySelector('.hero');
+        for (let i = 0; i < 50; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.cssText = `
+                position: absolute;
+                width: 2px;
+                height: 2px;
+                background: rgba(59, 130, 246, 0.5);
+                border-radius: 50%;
+                pointer-events: none;
+                animation: float ${Math.random() * 3 + 2}s linear infinite;
+                left: ${Math.random() * 100}%;
+                top: ${Math.random() * 100}%;
+            `;
+            hero.appendChild(particle);
+        }
+    </script>
+</body>
+</html> 

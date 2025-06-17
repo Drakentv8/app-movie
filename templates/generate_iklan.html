@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Ad Generator</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- SweetAlert2 for beautiful alerts -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css" rel="stylesheet">
+    <!-- Tippy.js for tooltips (for better user guidance) -->
+    <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/dist/tippy.css" />
+    <!-- Poppins Font for Menu (from user's provided menu code) -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        /* Reset dan base styles */
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        /* Navbar styles */
+        .navbar {
+            position: fixed !important;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(90deg, #0f172a 0%, #2563eb 60%, #7c3aed 100%) !important;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 2px solid rgba(167, 139, 250, 0.3);
+            padding: 0.5rem 1rem;
+            z-index: 9999 !important;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #fff !important;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .navbar-brand i {
+            color: #60a5fa;
+            margin-right: 0.5rem;
+        }
+
+        .navbar .nav-link {
+            color: #e2e8f0 !important;
+            font-weight: 600;
+            padding: 0.5rem 1rem !important;
+            margin: 0 0.2rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .navbar .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff !important;
+        }
+
+        .navbar .nav-link i {
+            margin-right: 0.5rem;
+            color: #60a5fa;
+        }
+
+        .navbar-toggler {
+            border: none;
+            padding: 0.5rem;
+        }
+
+        .navbar-toggler:focus {
+            box-shadow: none;
+        }
+
+        .navbar-toggler-icon {
+            background-image: none !important;
+            color: #fff;
+        }
+
+        /* Main content adjustment */
+        .main-content {
+            padding-top: 80px !important;
+            margin-left: 0 !important;
+            width: 100%;
+        }
+
+        @media (max-width: 991px) {
+            .navbar {
+                padding: 0.5rem;
+            }
+            
+            .navbar-brand {
+                font-size: 1.2rem;
+            }
+
+            .navbar .nav-link {
+                padding: 0.5rem !important;
+                margin: 0.2rem 0;
+            }
+
+            .main-content {
+                padding-top: 70px !important;
+            }
+        }
+
+        /* Custom Tailwind Configuration (optional, but good for defining custom styles if needed) */
+        :root {
+            --primary-bg: #0f172a; /* Slate 900 */
+            --secondary-bg: #1e293b; /* Slate 800 */
+            --text-color: #e2e8f0; /* Slate 200 */
+            --accent-color-1: #3b82f6; /* Blue 500 */
+            --accent-color-2: #10b981; /* Emerald 500 */
+            --gradient-start: #0f172a; /* Slate 900 */
+            --gradient-end: #1e40af; /* Blue 800 */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--text-color);
+            min-height: 100vh;
+            /* Adjust padding-top to account for the fixed navbar height */
+            padding-top: 4.5rem; /* Default for desktop navbar */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-bottom: 2rem;
+            overflow-y: auto;
+        }
+
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--primary-bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, var(--accent-color-1), var(--accent-color-2));
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #60a5fa, #34d399);
+        }
+
+        /* Tippy.js custom style for dark theme */
+        .tippy-box[data-theme~='custom'] {
+            background-color: var(--secondary-bg);
+            color: var(--text-color);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+            padding: 0.5rem 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .tippy-box[data-theme~='custom'][data-placement^='top'] > .tippy-arrow::before {
+            border-top-color: var(--secondary-bg);
+        }
+        .tippy-box[data-theme~='custom'][data-placement^='bottom'] > .tippy-arrow::before {
+            border-bottom-color: var(--secondary-bg);
+        }
+        .tippy-box[data-theme~='custom'][data-placement^='left'] > .tippy-arrow::before {
+            border-left-color: var(--secondary-bg);
+        }
+        .tippy-box[data-theme~='custom'][data-placement^='right'] > .tippy-arrow::before {
+            border-right-color: var(--secondary-bg);
+        }
+
+        /* Markdown rendering styles for generated concepts */
+        .prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
+            color: theme('colors.blue.300');
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+            line-height: 1.2;
+        }
+        .prose h1 { font-size: 2.25rem; }
+        .prose h2 { font-size: 1.875rem; }
+        .prose h3 { font-size: 1.5rem; }
+        .prose p {
+            margin-top: 0.5em;
+            margin-bottom: 0.5em;
+            color: theme('colors.slate.300');
+        }
+        .prose ul {
+            list-style-type: disc;
+            padding-left: 1.5em;
+            margin-top: 0.5em;
+            margin-bottom: 0.5em;
+            color: theme('colors.slate.300');
+        }
+        .prose ol {
+            list-style-type: decimal;
+            padding-left: 1.5em;
+            margin-top: 0.5em;
+            margin-bottom: 0.5em;
+            color: theme('colors.slate.300');
+        }
+        .prose li {
+            margin-bottom: 0.25em;
+        }
+        .prose strong {
+            color: theme('colors.white');
+        }
+
+        /* --- Custom CSS for Sidebar and Navbar (from user's provided menu code) --- */
+        body, .sidebar-menu, .navbar {
+            font-family: 'Poppins', 'Inter', 'Segoe UI', sans-serif !important;
+        }
+        :root {
+            --sidebar-width: 220px;
+            --navbar-height: 4.5rem; /* Consistent navbar height */
+        }
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15,23,42,0.45);
+            z-index: 1040;
+            transition: opacity 0.3s;
+        }
+        .sidebar-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+        .sidebar-menu {
+            position: fixed;
+            top: 0; /* Changed from 18px to 0 for full height slide */
+            left: -100vw;
+            width: var(--sidebar-width);
+            height: 100vh; /* Changed from calc(100vh - 36px) to 100vh */
+            background: linear-gradient(135deg, #101828 0%, #2563eb 60%, #7c3aed 100%);
+            box-shadow: 0 8px 32px 0 #2563eb33, 0 0 16px 1px #7c3aed33;
+            z-index: 1050;
+            transition: left 0.35s cubic-bezier(.77,0,.18,1);
+            border-top-right-radius: 28px;
+            border-bottom-right-radius: 28px;
+            overflow-y: auto;
+            padding-top: 0 !important; /* Managed by .sidebar-header now */
+            padding-left: 0 !important;
+            margin: 0 !important;
+            border-right: 2px solid #fff2;
+            border-left: 1px solid #fff1;
+            backdrop-filter: blur(10px) saturate(140%);
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+        .sidebar-menu.active {
+            left: 0;
+        }
+        .sidebar-header {
+            position: sticky; /* Make header sticky within the sidebar */
+            top: 0;
+            background: linear-gradient(135deg, #101828 0%, #2563eb 60%, #7c3aed 100%); /* Ensure background for sticky */
+            border-bottom: 1px solid rgba(255,255,255,0.10);
+            margin-bottom: 0; /* Removed bottom margin, padding used instead */
+            padding-top: 1.1rem;
+            padding-bottom: 0.7rem;
+            padding-left: 1.1rem;
+            z-index: 10; /* Ensure it stays above scrolling content */
+        }
+        .sidebar-menu .navbar-brand {
+            font-weight: 700;
+            font-size: 1.25rem;
+            background: linear-gradient(90deg, #fff 10%, #60a5fa 60%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1.2px;
+            text-shadow: 0 2px 8px #7c3aed33, 0 1px 2px #2563eb22;
+            filter: drop-shadow(0 2px 6px #2563eb33);
+        }
+        .btn-close-sidebar {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.4rem;
+            transition: color 0.2s;
+            cursor: pointer;
+        }
+        .btn-close-sidebar:hover {
+            color: #a78bfa;
+        }
+        .sidebar-menu .nav {
+            margin-top: 1rem; /* Adjust space after header */
+            padding-top: 0; /* Clear previous padding */
+            padding-bottom: 1rem; /* Add some padding at the bottom for scroll */
+            flex-grow: 1; /* Allow nav to take remaining space */
+        }
+        .sidebar-menu .nav-link {
+            color: #f3f4f6;
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 0.85rem 1.3rem;
+            border-radius: 22px;
+            margin: 0.3rem 0.8rem; /* Reduced margin for more items to fit */
+            transition: background 0.18s, color 0.18s, box-shadow 0.18s, border 0.18s, transform 0.18s, letter-spacing 0.18s;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            position: relative;
+            z-index: 1;
+            border: 2px solid transparent;
+            box-shadow: 0 2px 10px 0 rgba(59,130,246,0.10);
+            background: rgba(30,41,59,0.75);
+            backdrop-filter: blur(6px) saturate(110%);
+            letter-spacing: 0.2px;
+        }
+        .sidebar-menu .nav-link i {
+            font-size: 1.25em;
+            color: #60a5fa;
+            background: linear-gradient(135deg, #2563eb 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            border-radius: 50%;
+            padding: 0.4rem;
+            margin-right: 0.1rem;
+            box-shadow: 0 2px 6px #2563eb11;
+            transition: color 0.18s, background 0.18s;
+        }
+        .sidebar-menu .nav-link:hover, .sidebar-menu .nav-link.active {
+            background: linear-gradient(90deg, #2563eb 60%, #7c3aed 100%);
+            color: #fff;
+            border: 2px solid #a78bfa;
+            box-shadow: 0 8px 24px 0 #2563eb33, 0 0 12px 1px #7c3aed33;
+            outline: 2px solid #fff2;
+            transform: translateY(-1px) scale(1.03);
+            letter-spacing: 0.6px;
+            text-shadow: 0 2px 8px #7c3aed33, 0 1px 2px #2563eb22;
+        }
+        .sidebar-menu .nav-link.active {
+            outline: 2.5px solid #fff;
+            background: linear-gradient(90deg, #2563eb 80%, #7c3aed 100%);
+            color: #fff;
+        }
+        .navbar { /* Common navbar styling for both mobile and desktop */
+            height: var(--navbar-height);
+            display: flex;
+            align-items: center;
+            padding: 0 1rem;
+            position: fixed; /* Make both navbars fixed */
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background: linear-gradient(90deg, #0f172a 0%, #2563eb 60%, #7c3aed 100%); /* Ensure background */
+            box-shadow: 0 4px 30px rgba(59,130,246,0.13), 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+            border-bottom: 2.5px solid #a78bfa;
+            font-family: 'Poppins', 'Inter', 'Segoe UI', sans-serif !important;
+        }
+        .navbar .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #fff 10%, #60a5fa 60%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 16px #7c3aed55, 0 1px 2px #2563eb33;
+            filter: drop-shadow(0 2px 8px #2563eb33);
+        }
+        .navbar .nav-link {
+            color: #f3f4f6 !important;
+            font-weight: 700;
+            margin: 0 0.7rem;
+            font-size: 1.13rem;
+            border-radius: 18px;
+            padding: 0.7rem 1.3rem;
+            transition: background 0.22s, color 0.22s, box-shadow 0.22s, border 0.22s, letter-spacing 0.22s;
+            background: none;
+            letter-spacing: 0.5px;
+        }
+        .navbar .nav-link i {
+            font-size: 1.2em;
+            margin-right: 0.4rem;
+            background: linear-gradient(135deg, #2563eb 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .navbar .nav-link:hover, .navbar .nav-link.active {
+            background: linear-gradient(90deg, #2563eb 60%, #7c3aed 100%);
+            color: #fff !important;
+            box-shadow: 0 6px 24px 0 #2563eb55, 0 0 16px 2px #7c3aed55;
+            letter-spacing: 1.1px;
+            text-shadow: 0 2px 16px #7c3aed55, 0 1px 2px #2563eb33;
+        }
+        .navbar .nav-link.active {
+            background: linear-gradient(90deg, #2563eb 80%, #7c3aed 100%);
+            color: #fff !important;
+            box-shadow: 0 12px 36px 0 #2563eb77, 0 0 24px 2px #7c3aed77;
+        }
+
+        /* Specific toggle button styling */
+        .btn-sidebar-toggle {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.4rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            display: flex; /* Use flex to center icon */
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-sidebar-toggle .sidebar-toggle-icon {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background-color: #fff;
+            position: relative;
+            transition: background-color 0.3s;
+        }
+        .btn-sidebar-toggle .sidebar-toggle-icon::before,
+        .btn-sidebar-toggle .sidebar-toggle-icon::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+            transition: transform 0.3s;
+        }
+        .btn-sidebar-toggle .sidebar-toggle-icon::before {
+            transform: translateY(-8px);
+        }
+        .btn-sidebar-toggle .sidebar-toggle-icon::after {
+            transform: translateY(8px);
+        }
+
+        .main-content {
+            padding-top: 90px;
+            margin-left: 0 !important;
+        }
+        @media (min-width: 992px) {
+            .sidebar-menu {
+                left: 0 !important;
+                top: 0;
+                height: 100vh;
+                transition: none;
+                z-index: 1050;
+            }
+            .main-content {
+                margin-left: var(--sidebar-width);
+                transition: margin-left 0.3s;
+                max-width: calc(100vw - var(--sidebar-width));
+                padding-left: 0;
+                padding-right: 0;
+                padding-top: 72px;
+            }
+            .navbar.d-none.d-lg-flex {
+                padding-top: 8px;
+                padding-bottom: 8px;
+                z-index: 1100;
+            }
+            .sidebar-overlay {
+                display: none !important;
+            }
+            .btn.btn-sidebar-toggle, .btn-close-sidebar {
+                display: none !important;
+            }
+        }
+        @media (max-width: 991px) {
+            .sidebar-menu {
+                top: 0;
+                height: 100vh;
+                left: -100vw;
+                transition: left 0.35s cubic-bezier(.77,0,.18,1);
+                z-index: 1050;
+            }
+            .sidebar-menu.active {
+                left: 0 !important;
+            }
+            .sidebar-header .btn-close-sidebar {
+                display: block;
+            }
+            .btn.btn-sidebar-toggle {
+                display: inline-flex !important;
+            }
+            .sidebar-overlay {
+                display: block;
+                z-index: 1040;
+            }
+            .main-content {
+                padding-top: 70px;
+                margin-left: 0;
+            }
+        }
+        .navbar {
+            background: linear-gradient(90deg, #0f172a 0%, #2563eb 60%, #7c3aed 100%) !important;
+            box-shadow: 0 4px 30px rgba(59,130,246,0.13), 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+            border-bottom: 2.5px solid #a78bfa;
+        }
+        .navbar .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #fff 10%, #60a5fa 60%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 16px #7c3aed55, 0 1px 2px #2563eb33;
+            filter: drop-shadow(0 2px 8px #2563eb33);
+        }
+        .navbar .nav-link {
+            color: #f3f4f6 !important;
+            font-weight: 700;
+            margin: 0 0.7rem;
+            font-size: 1.13rem;
+            border-radius: 18px;
+            padding: 0.7rem 1.3rem;
+            transition: background 0.22s, color 0.22s, box-shadow 0.22s, border 0.22s, letter-spacing 0.22s;
+            background: none;
+            letter-spacing: 0.5px;
+        }
+        .navbar .nav-link i {
+            font-size: 1.2em;
+            margin-right: 0.4rem;
+            background: linear-gradient(135deg, #2563eb 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .navbar .nav-link:hover, .navbar .nav-link.active {
+            background: linear-gradient(90deg, #2563eb 60%, #7c3aed 100%);
+            color: #fff !important;
+            box-shadow: 0 6px 24px 0 #2563eb55, 0 0 16px 2px #7c3aed55;
+            letter-spacing: 1.1px;
+            text-shadow: 0 2px 16px #7c3aed55, 0 1px 2px #2563eb33;
+        }
+        .navbar .nav-link.active {
+            background: linear-gradient(90deg, #2563eb 80%, #7c3aed 100%);
+            color: #fff !important;
+            box-shadow: 0 12px 36px 0 #2563eb77, 0 0 24px 2px #7c3aed77;
+        }
+        @media (max-width: 991px) {
+            .navbar .navbar-brand {
+                font-size: 1.1rem;
+            }
+            .navbar .nav-link {
+                font-size: 1rem;
+                padding: 0.6rem 1rem;
+                margin: 0 0.2rem;
+            }
+            .main-content {
+                padding-top: 70px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-200 font-sans antialiased">
+    {% include 'sidebar.html' %}
+    <div class="main-content">
+        <div class="container mx-auto p-4 md:p-8 max-w-4xl">
+            <!-- Language Selector -->
+            <div class="flex justify-end mb-4 space-x-2">
+                <button id="langID" class="px-4 py-2 rounded-full text-sm font-semibold bg-blue-600 text-white shadow-md hover:bg-blue-700 transition-all duration-200">
+                    Bahasa Indonesia
+                </button>
+                <button id="langEN" class="px-4 py-2 rounded-full text-sm font-semibold bg-gray-700 text-gray-300 shadow-md hover:bg-gray-600 transition-all duration-200">
+                    English
+                </button>
+            </div>
+
+            <!-- Main Form Container -->
+            <div class="bg-slate-800/70 backdrop-blur-md rounded-2xl p-6 md:p-8 shadow-xl border border-slate-700 mb-8">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-center mb-6 bg-gradient-to-r from-blue-400 to-emerald-400 text-transparent bg-clip-text" data-i18n-key="appTitle">
+                    AI Ad Generator
+                </h1>
+                <form id="adForm" class="space-y-6">
+                    <div>
+                        <label for="productName" class="block text-slate-300 font-semibold mb-2" data-i18n-key="productNameLabel">Product Name</label>
+                        <input type="text" id="productName" name="product_name" required
+                               class="w-full p-3 rounded-xl bg-slate-900/50 border border-slate-700 text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
+                               data-i18n-placeholder-key="productNamePlaceholder">
+                    </div>
+                    <div>
+                        <label for="productType" class="block text-slate-300 font-semibold mb-2" data-i18n-key="productTypeLabel">Jenis Produk</label>
+                        <select id="productType" name="product_type" required
+                                class="w-full p-3 rounded-xl bg-slate-900/50 border border-slate-700 text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
+                                data-i18n-placeholder-key="selectProductTypePlaceholder">
+                            <option value="" data-i18n-key="selectProductTypeOption">Select Product Type</option>
+                            <option value="product" data-i18n-key="productPhysical">Physical Product</option>
+                            <option value="service" data-i18n-key="productService">Service</option>
+                            <option value="digital" data-i18n-key="productDigital">Digital Product</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="targetAudience" class="block text-slate-300 font-semibold mb-2" data-i18n-key="targetAudienceLabel">Target Audience</label>
+                        <textarea id="targetAudience" name="target_audience" rows="3" required
+                                  class="w-full p-3 rounded-xl bg-slate-900/50 border border-slate-700 text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
+                                  data-i18n-placeholder-key="targetAudiencePlaceholder"></textarea>
+                    </div>
+                    <div>
+                        <label for="adSummary" class="block text-slate-300 font-semibold mb-2" data-i18n-key="adSummaryLabel">Ad Summary</label>
+                        <textarea id="adSummary" name="ad_summary" rows="5" required
+                                  class="w-full p-3 rounded-xl bg-slate-900/50 border border-slate-700 text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
+                                  data-i18n-placeholder-key="adSummaryPlaceholder"></textarea>
+                        <!-- Character/Word Counter -->
+                        <div class="text-right text-xs text-slate-400 mt-1">
+                            <span id="charCount">0</span> <span data-i18n-key="charCountLabel">karakter</span> / <span id="wordCount">0</span> <span data-i18n-key="wordCountLabel">kata</span>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="productFeatures" class="block text-slate-300 font-semibold mb-2" data-i18n-key="productFeaturesLabel">Product Features (Optional, comma-separated)</label>
+                        <input type="text" id="productFeatures" name="product_features"
+                               class="w-full p-3 rounded-xl bg-slate-900/50 border border-slate-700 text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
+                               data-i18n-placeholder-key="productFeaturesPlaceholder">
+                    </div>
+                    <div>
+                        <label for="brandVoice" class="block text-slate-300 font-semibold mb-2" data-i18n-key="brandVoiceLabel">Brand Voice (Optional)</label>
+                        <input type="text" id="brandVoice" name="brand_voice"
+                               class="w-full p-3 rounded-xl bg-slate-900/50 border border-slate-700 text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
+                               data-i18n-placeholder-key="brandVoicePlaceholder">
+                    </div>
+                    <div>
+                        <label for="creativeAngle" class="block text-slate-300 font-semibold mb-2" data-i18n-key="creativeAngleLabel">Gaya Kreatif/Sudut Pandang (untuk Prompt VEO 3)</label>
+                        <select id="creativeAngle" name="creative_angle"
+                                class="w-full p-3 rounded-xl bg-slate-900/50 border border-slate-700 text-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-200"
+                                data-i18n-placeholder-key="creativeAnglePlaceholder">
+                            <option value="" data-i18n-key="selectCreativeAngleOption">Pilih Sudut Pandang Kreatif</option>
+                            <option value="Energetic and Dynamic" data-i18n-key="angleEnergetic">Energetic and Dynamic</option>
+                            <option value="Calm and Elegant" data-i18n-key="angleCalmElegant">Calm and Elegant</option>
+                            <option value="Problem-Solution Focused" data-i18n-key="angleProblemSolution">Problem-Solution Focused</option>
+                            <option value="Story-driven Narrative" data-i18n-key="angleStoryDriven">Story-driven Narrative</option>
+                            <option value="Luxurious and Premium" data-i18n-key="angleLuxurious">Luxurious and Premium</option>
+                            <option value="Fun and Playful" data-i18n-key="angleFunPlayful">Fun and Playful</option>
+                            <option value="Minimalist and Clean" data-i18n-key="angleMinimalist">Minimalist and Clean</option>
+                        </select>
+                    </div>
+
+                    <!-- New Feature: Image Upload for Visual Inspiration -->
+                    <div class="mt-6 p-4 border border-slate-700 rounded-xl bg-slate-900/50">
+                        <label for="visualInspiration" class="block text-slate-300 font-semibold mb-3 text-lg" data-i18n-key="visualInspirationLabel">
+                            <i class="fas fa-image mr-2"></i> Inspirasi Visual (untuk Prompt VEO 3)
+                        </label>
+                        <input type="file" id="visualInspiration" accept="image/*" class="w-full text-slate-300 p-2 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-600">
+                        <div id="imagePreviewContainer" class="mt-4 flex flex-wrap gap-4 items-center hidden">
+                            <img id="imagePreview" src="#" alt="Image Preview" class="max-w-[150px] max-h-[150px] rounded-lg shadow-md border border-slate-700 object-cover">
+                            <button type="button" id="clearImageBtn" class="px-3 py-1 bg-red-600 text-white rounded-full text-sm hover:bg-red-700 transition-colors">
+                                <i class="fas fa-times mr-1"></i> <span data-i18n-key="clearImageButton">Hapus Gambar</span>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- End New Feature -->
+
+                    <div class="flex flex-col sm:flex-row justify-between space-y-4 sm:space-y-0 sm:space-x-4 pt-4">
+                        <button type="button" id="startNewAdBtn"
+                                class="flex-1 px-6 py-3 rounded-full font-bold text-white uppercase tracking-wider shadow-lg
+                                       bg-gradient-to-r from-red-500 to-orange-600 hover:from-red-600 hover:to-orange-700
+                                       transform hover:-translate-y-1 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 focus:ring-offset-slate-800"
+                                data-i18n-key="startNewAdButton">
+                            <i class="fas fa-redo mr-2"></i> Mulai Iklan Baru
+                        </button>
+                        <button type="button" id="autoFillProductDetailsBtn"
+                                class="flex-1 px-6 py-3 rounded-full font-bold text-white uppercase tracking-wider shadow-lg
+                                       bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700
+                                       transform hover:-translate-y-1 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-slate-800"
+                                data-i18n-key="autoFillButton">
+                            <i class="fas fa-magic mr-2"></i> Isi Otomatis Bidang
+                        </button>
+                        <button type="button" id="generateVeoPromptBtn"
+                                class="flex-1 px-6 py-3 rounded-full font-bold text-white uppercase tracking-wider shadow-lg
+                                       bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700
+                                       transform hover:-translate-y-1 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2 focus:ring-offset-slate-800"
+                                data-i18n-key="generateVeoPromptButton">
+                            <i class="fas fa-video mr-2"></i> Buat Prompt VEO 3
+                        </button>
+                        <button type="submit"
+                                class="flex-1 px-6 py-3 rounded-full font-bold text-white uppercase tracking-wider shadow-lg
+                                       bg-gradient-to-r from-blue-500 to-emerald-500 hover:from-blue-600 hover:to-emerald-600
+                                       transform hover:-translate-y-1 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-slate-800"
+                                data-i18n-key="generateAdConceptsButton">
+                            <i class="fas fa-lightbulb mr-2"></i> Buat Konsep Iklan
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Loading Overlay -->
+            <div id="loadingOverlay" class="fixed inset-0 bg-slate-900/90 flex justify-center items-center z-[9999] hidden">
+                <div class="w-16 h-16 border-t-4 border-b-4 border-blue-500 rounded-full animate-spin"></div>
+            </div>
+
+            <!-- Results Container for Ad Concepts -->
+            <div id="adConceptsResultContainer" class="bg-slate-800/70 backdrop-blur-md rounded-2xl p-6 md:p-8 shadow-xl border border-slate-700 mt-8 hidden">
+                <h2 class="text-2xl md:text-3xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-emerald-400 text-transparent bg-clip-text" data-i18n-key="adConceptsTitle">Generated Ad Concepts</h2>
+                <div id="adConceptsContent" class="text-slate-300 leading-relaxed space-y-4 prose prose-invert max-w-none">
+                    <!-- AI generated content will be inserted here and rendered as Markdown -->
+                </div>
+            </div>
+
+            <!-- Results Container for VEO 3 Prompt -->
+            <div id="veoPromptResultContainer" class="bg-slate-800/70 backdrop-blur-md rounded-2xl p-6 md:p-8 shadow-xl border border-slate-700 mt-8 hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-purple-400 to-indigo-400 text-transparent bg-clip-text" data-i18n-key="veoPromptTitle">Generated VEO 3 Prompt</h2>
+                    <button id="copyVeoPromptBtn"
+                            class="px-4 py-2 rounded-full text-sm font-semibold bg-indigo-600 text-white shadow-md hover:bg-indigo-700 transition-all duration-200"
+                            data-i18n-key="copyButton">
+                        <i class="fas fa-copy mr-2"></i> Copy
+                    </button>
+                </div>
+                <pre id="veoPromptContent" class="bg-slate-900/70 p-4 rounded-xl text-sm md:text-base overflow-x-auto whitespace-pre-wrap break-words text-slate-100 font-mono">
+                    <!-- AI generated VEO 3 JSON will be inserted here -->
+                </pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
+    <!-- Tippy.js and Popper.js (dependency for Tippy) -->
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
+    <!-- Marked.js for Markdown rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.12/marked.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Sidebar toggle logic (from user's provided menu code)
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebarMenu = document.getElementById('sidebarMenu');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const sidebarClose = document.getElementById('sidebarClose');
+
+        function openSidebar() {
+            sidebarMenu.classList.add('active');
+            sidebarOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeSidebar() {
+            sidebarMenu.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        if (sidebarToggle) sidebarToggle.onclick = openSidebar;
+        if (sidebarClose) sidebarClose.onclick = closeSidebar;
+        if (sidebarOverlay) sidebarOverlay.onclick = closeSidebar;
+        // Close sidebar on ESC
+        window.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeSidebar();
+        });
+
+        // Close mobile sidebar automatically when a menu link is clicked
+        window.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.sidebar-menu .nav-link').forEach(function(link) {
+                link.addEventListener('click', function() {
+                    if(window.innerWidth < 992) {
+                        document.getElementById('sidebarMenu').classList.remove('active');
+                        document.getElementById('sidebarOverlay').classList.remove('active');
+                        document.body.style.overflow = '';
+                    }
+                });
+            });
+        });
+
+
+        // Language translations
+        const translations = {
+            id: {
+                appTitle: "Generator Iklan AI",
+                productNameLabel: "Nama Produk",
+                productNamePlaceholder: "Contoh: Aplikasi Produktivitas 'FokusKu'",
+                productTypeLabel: "Jenis Produk",
+                selectProductTypeOption: "Pilih Jenis Produk",
+                productPhysical: "Produk Fisik",
+                productService: "Layanan",
+                productDigital: "Produk Digital",
+                targetAudienceLabel: "Target Audiens",
+                targetAudiencePlaceholder: "Contoh: Mahasiswa, profesional muda yang sibuk, mencari efisiensi.",
+                adSummaryLabel: "Ringkasan Iklan",
+                adSummaryPlaceholder: "Ringkas tujuan iklan, pesan utama, dan suasana yang diinginkan (Contoh: Iklan 30 detik yang menunjukkan bagaimana aplikasi FokusKu membantu pengguna tetap teratur dan mengurangi stres).",
+                brandVoiceLabel: "Suara Merek (Opsional)",
+                brandVoicePlaceholder: "Contoh: Inovatif, ramah, profesional",
+                productFeaturesLabel: "Fitur Produk (Opsional, pisahkan dengan koma)",
+                productFeaturesPlaceholder: "Contoh: tahan air, baterai tahan lama, kualitas audio tinggi",
+                creativeAngleLabel: "Gaya Kreatif/Sudut Pandang (untuk Prompt VEO 3)",
+                selectCreativeAngleOption: "Pilih Sudut Pandang Kreatif",
+                angleEnergetic: "Energetic and Dynamic",
+                angleCalmElegant: "Tenang dan Elegan",
+                angleProblemSolution: "Fokus Solusi Masalah",
+                angleStoryDriven: "Naratif Berbasis Cerita",
+                angleLuxurious: "Mewah dan Premium",
+                angleFunPlayful: "Menyenangkan dan Ceria",
+                angleMinimalist: "Minimalis dan Bersih",
+                startNewAdButton: "Mulai Iklan Baru",
+                autoFillButton: "Isi Otomatis Bidang",
+                generateVeoPromptButton: "Buat Prompt VEO 3",
+                generateAdConceptsButton: "Buat Konsep Iklan",
+                adConceptsTitle: "Konsep Iklan yang Dihasilkan",
+                veoPromptTitle: "Prompt VEO 3 yang Dihasilkan",
+                copyButton: "Salin",
+                visualInspirationLabel: "Inspirasi Visual (untuk Prompt VEO 3)",
+                clearImageButton: "Hapus Gambar",
+                // SweetAlert messages
+                adSummaryRequired: "Silakan isi ringkasan iklan terlebih dahulu!",
+                productNameRequiredForAutoFill: "Silakan isi nama produk terlebih dahulu untuk mengisi otomatis bidang!",
+                veoPromptSuccess: "Prompt VEO 3 berhasil dibuat!",
+                adConceptsSuccess: "Konsep iklan berhasil dibuat!",
+                autoFillSuccess: "Bidang berhasil diisi otomatis!",
+                errorTitle: "Oops...",
+                errorGeneral: "Terjadi kesalahan: ",
+                copySuccess: "Disalin!",
+                copyFailure: "Gagal menyalin!",
+                charCountLabel: "karakter",
+                wordCountLabel: "kata",
+                // Tooltip content
+                tooltipStartNewAd: "Hapus semua input formulir dan hasil untuk memulai iklan baru dari awal.",
+                tooltipAutoFill: "Isi otomatis nama produk, jenis, audiens, ringkasan, dan fitur produk berdasarkan nama produk yang dimasukkan.",
+                tooltipGenerateVeo: "Buat prompt terstruktur untuk generator video AI (seperti Veo 3) berdasarkan semua detail formulir, dan inspirasi visual jika ada.",
+                tooltipGenerateConcepts: "Hasilkan dua ide konsep iklan kreatif lengkap dengan naskah, visual, dan desain suara."
+            },
+            en: {
+                appTitle: "AI Ad Generator",
+                productNameLabel: "Product Name",
+                productNamePlaceholder: "Example: 'FocusFlow' Productivity App",
+                productTypeLabel: "Product Type",
+                selectProductTypeOption: "Select Product Type",
+                productPhysical: "Physical Product",
+                productService: "Service",
+                productDigital: "Digital Product",
+                targetAudienceLabel: "Target Audience",
+                targetAudiencePlaceholder: "Example: University students, busy young professionals seeking efficiency.",
+                adSummaryLabel: "Ad Summary",
+                adSummaryPlaceholder: "Summarize the ad's goal, main message, and desired mood (e.g., A 30-second ad showing how the FocusFlow app helps users stay organized and reduce stress).",
+                brandVoiceLabel: "Brand Voice (Optional)",
+                brandVoicePlaceholder: "Example: Innovative, friendly, professional",
+                productFeaturesLabel: "Product Features (Optional, comma-separated)",
+                productFeaturesPlaceholder: "Example: waterproof, long-lasting battery, high-quality audio",
+                creativeAngleLabel: "Creative Style/Angle (for VEO 3 Prompt)",
+                selectCreativeAngleOption: "Select Creative Angle",
+                angleEnergetic: "Energetic and Dynamic",
+                angleCalmElegant: "Calm and Elegant",
+                angleProblemSolution: "Problem-Solution Focused",
+                angleStoryDriven: "Story-driven Narrative",
+                angleLuxurious: "Luxurious and Premium",
+                angleFunPlayful: "Fun and Playful",
+                angleMinimalist: "Minimalist and Clean",
+                startNewAdButton: "Start New Ad",
+                autoFillButton: "Auto-Fill Fields",
+                generateVeoPromptButton: "Generate VEO 3 Prompt",
+                generateAdConceptsButton: "Generate Ad Concepts",
+                adConceptsTitle: "Generated Ad Concepts",
+                veoPromptTitle: "Generated VEO 3 Prompt",
+                copyButton: "Copy",
+                visualInspirationLabel: "Visual Inspiration (for VEO 3 Prompt)",
+                clearImageButton: "Clear Image",
+                // SweetAlert messages
+                adSummaryRequired: "Please fill in the ad summary first!",
+                productNameRequiredForAutoFill: "Please fill in the product name first to auto-fill fields!",
+                veoPromptSuccess: "VEO 3 prompt successfully generated!",
+                adConceptsSuccess: "Ad concepts successfully generated!",
+                autoFillSuccess: "Fields auto-filled successfully!",
+                errorTitle: "Oops...",
+                errorGeneral: "An error occurred: ",
+                copySuccess: "Copied!",
+                copyFailure: "Failed to copy!",
+                charCountLabel: "characters",
+                wordCountLabel: "words",
+                // Tooltip content
+                tooltipStartNewAd: "Clear all form inputs and results to start a new ad from scratch.",
+                tooltipAutoFill: "Auto-fill product name, type, audience, ad summary, and product features based on the entered product name.",
+                tooltipGenerateVeo: "Generate a structured prompt for AI video generators (like Veo 3) based on all form details, and visual inspiration if provided.",
+                tooltipGenerateConcepts: "Generate two complete creative ad concept ideas with script, visuals, and sound design."
+            }
+        };
+
+        let currentLanguage = 'id'; // Default language
+        let uploadedImageBase64 = null; // Stores the Base64 image data
+        let uploadedImageMimeType = null; // Stores the MIME type of the image
+        let currentDetailedProductDescription = ''; // Stores the AI-generated detailed description for consistency
+
+
+        // Function to update UI elements based on current language
+        function updateUIForLanguage(lang) {
+            currentLanguage = lang;
+            document.documentElement.lang = lang; // Update HTML lang attribute
+
+            // Update text for elements with data-i18n-key
+            document.querySelectorAll('[data-i18n-key]').forEach(element => {
+                const key = element.getAttribute('data-i18n-key');
+                if (translations[lang][key]) {
+                    element.textContent = translations[lang][key];
+                }
+            });
+
+            // Update placeholders for elements with data-i18n-placeholder-key
+            document.querySelectorAll('[data-i18n-placeholder-key]').forEach(element => {
+                const key = element.getAttribute('data-i18n-placeholder-key');
+                if (translations[lang][key]) {
+                    element.placeholder = translations[lang][key];
+                }
+            });
+            
+            // Update options for select elements with data-i18n-key
+            document.querySelectorAll('select[data-i18n-placeholder-key] option').forEach(option => {
+                const key = option.getAttribute('data-i18n-key');
+                if (key && translations[lang][key]) {
+                    option.textContent = translations[lang][key];
+                }
+            });
+
+            // Update character/word counter labels
+            const charLabelElement = document.querySelector('#charCount + [data-i18n-key="charCountLabel"]');
+            const wordLabelElement = document.querySelector('#wordCount + [data-i18n-key="wordCountLabel"]');
+
+            if (charLabelElement) charLabelElement.textContent = translations[lang]['charCountLabel'];
+            if (wordLabelElement) wordLabelElement.textContent = translations[lang]['wordCountLabel'];
+
+
+            // Re-initialize tooltips with updated content
+            initTooltips();
+
+            // Highlight active language button
+            if (lang === 'id') {
+                document.getElementById('langID').classList.add('bg-blue-600', 'text-white');
+                document.getElementById('langID').classList.remove('bg-gray-700', 'text-gray-300');
+                document.getElementById('langEN').classList.remove('bg-blue-600', 'text-white');
+                document.getElementById('langEN').classList.add('bg-gray-700', 'text-gray-300');
+            } else {
+                document.getElementById('langEN').classList.add('bg-blue-600', 'text-white');
+                document.getElementById('langEN').classList.remove('bg-gray-700', 'text-gray-300');
+                document.getElementById('langID').classList.remove('bg-blue-600', 'text-white');
+                document.getElementById('langID').classList.add('bg-gray-700', 'text-gray-300');
+            }
+        }
+
+        // Initialize Tippy.js tooltips
+        function initTooltips() {
+            // Destroy existing tooltips to prevent duplicates
+            if (window.tippyInstances) {
+                window.tippyInstances.forEach(instance => instance.destroy());
+            }
+            window.tippyInstances = [];
+
+            const createTippy = (elementId, contentKey) => {
+                const element = document.getElementById(elementId);
+                if (element) {
+                    const instance = tippy(element, {
+                        content: translations[currentLanguage][contentKey],
+                        theme: 'custom',
+                        placement: 'bottom',
+                        animation: 'fade',
+                    });
+                    window.tippyInstances.push(instance);
+                }
+            };
+
+            createTippy('startNewAdBtn', 'tooltipStartNewAd'); // Tooltip for new button
+            createTippy('autoFillProductDetailsBtn', 'tooltipAutoFill');
+            createTippy('generateVeoPromptBtn', 'tooltipGenerateVeo');
+            const submitButton = document.querySelector('#adForm button[type="submit"]');
+            if (submitButton) {
+                const instance = tippy(submitButton, {
+                    content: translations[currentLanguage]['tooltipGenerateConcepts'],
+                    theme: 'custom',
+                    placement: 'bottom',
+                    animation: 'fade',
+                });
+                window.tippyInstances.push(instance);
+            }
+        }
+
+
+        // Event listeners for language buttons
+        document.getElementById('langID').addEventListener('click', () => updateUIForLanguage('id'));
+        document.getElementById('langEN').addEventListener('click', () => updateUIForLanguage('en'));
+
+        // Set initial language
+        updateUIForLanguage(currentLanguage);
+
+        const API_ENDPOINTS = {
+            generate: '/generate-iklan/api/generate',
+            autoFill: '/generate-iklan/api/auto-fill-form', // For full VEO 3 prompt
+            inferFields: '/generate-iklan/api/infer-form-fields' // For initial form fields
+        };
+
+        // Function to show loading overlay
+        function showLoading() {
+            document.getElementById('loadingOverlay').classList.remove('hidden');
+        }
+
+        // Function to hide loading overlay
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.add('hidden');
+        }
+
+        // Function to display SweetAlerts
+        function showAlert(icon, titleKey, textKey, customText = '') {
+            const title = translations[currentLanguage][titleKey] || titleKey;
+            const text = (customText || translations[currentLanguage][textKey]) || textKey;
+            Swal.fire({
+                icon: icon,
+                title: title,
+                text: text,
+                customClass: {
+                    popup: 'bg-slate-800 text-slate-200 rounded-xl shadow-lg',
+                    title: 'text-blue-400 font-bold',
+                    confirmButton: 'bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-full px-6 py-2 transition-all',
+                },
+                buttonsStyling: false,
+                confirmButtonText: 'OK'
+            });
+        }
+
+        // Character and word counter for adSummary
+        const adSummaryTextarea = document.getElementById('adSummary');
+        const charCountSpan = document.getElementById('charCount');
+        const wordCountSpan = document.getElementById('wordCount');
+
+        function updateCounts() {
+            const text = adSummaryTextarea.value;
+            charCountSpan.textContent = text.length;
+            const words = text.trim().split(/\s+/).filter(word => word.length > 0);
+            wordCountSpan.textContent = words.length;
+        }
+
+        adSummaryTextarea.addEventListener('input', updateCounts);
+        // Initial update in case there's pre-filled text
+        updateCounts();
+
+        // Image upload handling
+        const visualInspirationInput = document.getElementById('visualInspiration');
+        const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+        const imagePreview = document.getElementById('imagePreview');
+        const clearImageBtn = document.getElementById('clearImageBtn');
+
+        visualInspirationInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedImageBase64 = e.target.result.split(',')[1]; // Get Base64 part
+                    uploadedImageMimeType = file.type;
+                    imagePreview.src = e.target.result;
+                    imagePreviewContainer.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                uploadedImageBase64 = null;
+                uploadedImageMimeType = null;
+                imagePreview.src = '#';
+                imagePreviewContainer.classList.add('hidden');
+            }
+        });
+
+        clearImageBtn.addEventListener('click', function() {
+            visualInspirationInput.value = ''; // Clear file input
+            uploadedImageBase64 = null;
+            uploadedImageMimeType = null;
+            imagePreview.src = '#';
+            imagePreviewContainer.classList.add('hidden');
+        });
+
+        // NEW: Event listener for "Start New Ad" button
+        document.getElementById('startNewAdBtn').addEventListener('click', function() {
+            document.getElementById('adForm').reset(); // Clear all form fields
+            uploadedImageBase64 = null; // Clear uploaded image data
+            uploadedImageMimeType = null;
+            imagePreview.src = '#';
+            imagePreviewContainer.classList.add('hidden');
+            currentDetailedProductDescription = ''; // Clear detailed description for new session
+            document.getElementById('adConceptsResultContainer').classList.add('hidden'); // Hide results
+            document.getElementById('veoPromptResultContainer').classList.add('hidden'); // Hide results
+            updateCounts(); // Reset character/word counter
+            showAlert('info', 'startNewAdButton', '', 'Formulir telah diatur ulang. Anda bisa memulai iklan baru!'); // Inform user
+        });
+
+
+        // Event listener for "Auto-Fill Fields" button
+        document.getElementById('autoFillProductDetailsBtn').addEventListener('click', async function() {
+            const productName = document.getElementById('productName').value;
+            if (!productName) {
+                showAlert('error', 'errorTitle', 'productNameRequiredForAutoFill');
+                return;
+            }
+
+            showLoading();
+
+            try {
+                const formData = {
+                    product_name: productName,
+                    output_language: currentLanguage 
+                };
+
+                const response = await fetch(API_ENDPOINTS.inferFields, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    document.getElementById('productName').value = data.product_name || '';
+                    document.getElementById('productType').value = data.product_type || '';
+                    document.getElementById('targetAudience').value = data.target_audience || '';
+                    document.getElementById('adSummary').value = data.ad_summary || '';
+                    document.getElementById('productFeatures').value = data.product_features || ''; 
+                    currentDetailedProductDescription = data.detailed_description || ''; // Store the detailed description
+
+                    updateCounts(); 
+                    showAlert('success', 'autoFillSuccess', ''); 
+                } else {
+                    throw new Error(data.error || translations[currentLanguage]['errorGeneral'] + 'auto-filling fields.');
+                }
+            } catch (error) {
+                console.error("Error auto-filling form fields:", error);
+                showAlert('error', 'errorTitle', '', error.message);
+            } finally {
+                hideLoading();
+            }
+        });
+
+
+        // Event listener for "Generate VEO 3 Prompt" button
+        document.getElementById('generateVeoPromptBtn').addEventListener('click', async function() {
+            const adSummary = document.getElementById('adSummary').value;
+            if (!adSummary) {
+                showAlert('error', 'errorTitle', 'adSummaryRequired');
+                return;
+            }
+
+            showLoading();
+
+            try {
+                const formData = {
+                    product_name: document.getElementById('productName').value,
+                    product_type: document.getElementById('productType').value,
+                    target_audience: document.getElementById('targetAudience').value,
+                    ad_summary: adSummary,
+                    brand_voice: document.getElementById('brandVoice').value,
+                    creative_angle: document.getElementById('creativeAngle').value,
+                    product_features: document.getElementById('productFeatures').value, 
+                    output_language: currentLanguage,
+                    image_data_b64: uploadedImageBase64,
+                    image_mime_type: uploadedImageMimeType,
+                    detailed_description: currentDetailedProductDescription // NEW: Pass detailed description for consistency
+                };
+
+                const response = await fetch(API_ENDPOINTS.autoFill, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    const veoPromptResultContainer = document.getElementById('veoPromptResultContainer');
+                    const veoPromptContent = document.getElementById('veoPromptContent');
+                    
+                    veoPromptContent.textContent = JSON.stringify(data, null, 2);
+                    veoPromptResultContainer.classList.remove('hidden');
+                    
+                    showAlert('success', 'veoPromptSuccess', '');
+                } else {
+                    throw new Error(data.error || translations[currentLanguage]['errorGeneral'] + 'VEO 3 prompt.');
+                }
+            } catch (error) {
+                console.error("Error generating VEO 3 prompt:", error);
+                showAlert('error', 'errorTitle', '', error.message);
+            } finally {
+                hideLoading();
+            }
+        });
+
+        // Event listener for "Generate Ad Concepts" button
+        document.getElementById('adForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const adSummary = document.getElementById('adSummary').value;
+            if (!adSummary) {
+                showAlert('error', 'errorTitle', 'adSummaryRequired');
+                return;
+            }
+
+            showLoading();
+
+            try {
+                const formData = {
+                    product_name: document.getElementById('productName').value,
+                    product_type: document.getElementById('productType').value,
+                    target_audience: document.getElementById('targetAudience').value,
+                    ad_summary: adSummary,
+                    brand_voice: document.getElementById('brandVoice').value,
+                    product_features: document.getElementById('productFeatures').value, 
+                    output_language: currentLanguage
+                };
+
+                const response = await fetch(API_ENDPOINTS.generate, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    const adConceptsResultContainer = document.getElementById('adConceptsResultContainer');
+                    const adConceptsContent = document.getElementById('adConceptsContent');
+                    
+                    // Use marked.js to render Markdown to HTML
+                    adConceptsContent.innerHTML = marked.parse(data.text);
+                    adConceptsResultContainer.classList.remove('hidden');
+                    
+                    showAlert('success', 'adConceptsSuccess', '');
+                } else {
+                    throw new Error(data.error || translations[currentLanguage]['errorGeneral'] + 'ad concepts.');
+                }
+            } catch (error) {
+                console.error("Error generating ad concepts:", error);
+                showAlert('error', 'errorTitle', '', error.message);
+            } finally {
+                hideLoading();
+            }
+        });
+
+        // Copy VEO 3 Prompt to Clipboard
+        document.getElementById('copyVeoPromptBtn').addEventListener('click', async () => {
+            const textToCopy = document.getElementById('veoPromptContent').textContent;
+            try {
+                // Using document.execCommand('copy') as navigator.clipboard.writeText() might have issues in iframes
+                const textArea = document.createElement("textarea");
+                textArea.value = textToCopy;
+                textArea.style.position = "fixed"; // Prevent scrolling to bottom of page in MS Edge.
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showAlert('success', 'copySuccess', '');
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+                showAlert('error', 'errorTitle', 'copyFailure');
+            }
+        });
+
+        // Initial call to initTooltips after the DOM is loaded
+        document.addEventListener('DOMContentLoaded', initTooltips);
+    </script>
+</body>
+</html>
